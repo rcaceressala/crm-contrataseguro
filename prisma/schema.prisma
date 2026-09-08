@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  ADMIN
+  SUPERVISOR
+  VENDEDOR
+}
+
+enum LeadStatus {
+  NUEVO
+  CONTACTADO
+  INTERESADO
+  VISITA_AGENDADA
+  RESERVA
+  VENDIDO
+  PERDIDO
+}
+
+enum LeadSource {
+  INSTAGRAM
+  FACEBOOK_ADS
+  GOOGLE_ADS
+  TIKTOK
+  WHATSAPP
+  ORGANICO
+  REFERIDO
+  MANUAL
+}
+
+enum PropertyStatus {
+  DISPONIBLE
+  RESERVADA
+  VENDIDA
+}
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  email        String     @unique
+  passwordHash String
+  role         Role       @default(VENDEDOR)
+  active       Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  leads        Lead[]     @relation("AssignedLeads")
+  notes        LeadNote[]
+  followUps    FollowUp[]
+  sales        Sale[]
+}
+
+model Lead {
+  id             String     @id @default(cuid())
+  name           String
+  phone          String
+  email          String?
+  message        String?
+  status         LeadStatus @default(NUEVO)
+  source         LeadSource @default(MANUAL)
+  // UTM tracking
+  utmSource      String?
+  utmMedium      String?
+  utmCampaign    String?
+  utmContent     String?
+  utmTerm        String?
+  fbclid         String?
+  gclid          String?
+  landingPage    String?
+  referrer       String?
+  device         String?
+  ipAddress      String?
+  // Relaciones
+  assignedTo     User?      @relation("AssignedLeads", fields: [assignedUserId], references: [id])
+  assignedUserId String?
+  property       Property?  @relation(fields: [propertyId], references: [id])
+  propertyId     String?
+  campaign       Campaign?  @relation(fields: [campaignId], references: [id])
+  campaignId     String?
+  notes          LeadNote[]
+  followUps      FollowUp[]
+  sale           Sale?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+}
+
+model LeadNote {
+  id        String   @id @default(cuid())
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId    String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  note      String
+  createdAt DateTime @default(now())
+}
+
+model FollowUp {
+  id           String   @id @default(cuid())
+  lead         Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId       String
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String
+  followUpDate DateTime
+  description  String
+  done         Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Property {
+  id          String         @id @default(cuid())
+  title       String
+  slug        String         @unique
+  description String?
+  price       Float
+  area        Float
+  location    String
+  status      PropertyStatus @default(DISPONIBLE)
+  images      String[]
+  leads       Lead[]
+  sales       Sale[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model Campaign {
+  id          String    @id @default(cuid())
+  name        String
+  platform    String
+  budget      Float?
+  startDate   DateTime?
+  endDate     DateTime?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  active      Boolean   @default(true)
+  leads       Lead[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Sale {
+  id         String   @id @default(cuid())
+  lead       Lead     @relation(fields: [leadId], references: [id])
+  leadId     String   @unique
+  property   Property @relation(fields: [propertyId], references: [id])
+  propertyId String
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  amount     Float
+  saleDate   DateTime @default(now())
+  notes      String?
+  createdAt  DateTime @default(now())
+}
+
+model TrackingEvent {
+  id          String   @id @default(cuid())
+  type        String
+  page        String?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  fbclid      String?
+  gclid       String?
+  device      String?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+}
