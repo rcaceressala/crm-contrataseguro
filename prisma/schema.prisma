@@ -1,27 +1,30 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
+  schemas   = ["seguros"]
 }
 
 enum Role {
   ADMIN
-  SUPERVISOR
-  VENDEDOR
+  ASESOR
+
+  @@schema("seguros")
 }
 
 enum LeadStatus {
   NUEVO
   CONTACTADO
-  INTERESADO
-  VISITA_AGENDADA
-  RESERVA
-  VENDIDO
+  COTIZADO
+  CONVERTIDO
   PERDIDO
+
+  @@schema("seguros")
 }
 
 enum LeadSource {
@@ -33,12 +36,20 @@ enum LeadSource {
   ORGANICO
   REFERIDO
   MANUAL
+
+  @@schema("seguros")
 }
 
-enum PropertyStatus {
-  DISPONIBLE
-  RESERVADA
-  VENDIDA
+enum InsuranceCategory {
+  COMPLEMENTARIO
+  DENTAL
+  CATASTROFICO
+  MASCOTAS
+  HOGAR
+  AUTOMOTRIZ
+  VIDA
+
+  @@schema("seguros")
 }
 
 model User {
@@ -46,7 +57,7 @@ model User {
   name         String
   email        String     @unique
   passwordHash String
-  role         Role       @default(VENDEDOR)
+  role         Role       @default(ASESOR)
   active       Boolean    @default(true)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
@@ -54,17 +65,19 @@ model User {
   notes        LeadNote[]
   followUps    FollowUp[]
   sales        Sale[]
+
+  @@schema("seguros")
 }
 
 model Lead {
-  id             String     @id @default(cuid())
+  id             String            @id @default(cuid())
   name           String
   phone          String
   email          String?
   message        String?
-  status         LeadStatus @default(NUEVO)
-  source         LeadSource @default(MANUAL)
-  // UTM tracking
+  status         LeadStatus        @default(NUEVO)
+  source         LeadSource        @default(MANUAL)
+  category       InsuranceCategory
   utmSource      String?
   utmMedium      String?
   utmCampaign    String?
@@ -76,11 +89,8 @@ model Lead {
   referrer       String?
   device         String?
   ipAddress      String?
-  // Relaciones
   assignedTo     User?      @relation("AssignedLeads", fields: [assignedUserId], references: [id])
   assignedUserId String?
-  property       Property?  @relation(fields: [propertyId], references: [id])
-  propertyId     String?
   campaign       Campaign?  @relation(fields: [campaignId], references: [id])
   campaignId     String?
   notes          LeadNote[]
@@ -88,6 +98,8 @@ model Lead {
   sale           Sale?
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
+
+  @@schema("seguros")
 }
 
 model LeadNote {
@@ -98,6 +110,8 @@ model LeadNote {
   userId    String
   note      String
   createdAt DateTime @default(now())
+
+  @@schema("seguros")
 }
 
 model FollowUp {
@@ -111,22 +125,8 @@ model FollowUp {
   done         Boolean  @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-}
 
-model Property {
-  id          String         @id @default(cuid())
-  title       String
-  slug        String         @unique
-  description String?
-  price       Float
-  area        Float
-  location    String
-  status      PropertyStatus @default(DISPONIBLE)
-  images      String[]
-  leads       Lead[]
-  sales       Sale[]
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  @@schema("seguros")
 }
 
 model Campaign {
@@ -143,20 +143,23 @@ model Campaign {
   leads       Lead[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  @@schema("seguros")
 }
 
 model Sale {
-  id         String   @id @default(cuid())
-  lead       Lead     @relation(fields: [leadId], references: [id])
-  leadId     String   @unique
-  property   Property @relation(fields: [propertyId], references: [id])
-  propertyId String
-  user       User     @relation(fields: [userId], references: [id])
-  userId     String
-  amount     Float
-  saleDate   DateTime @default(now())
-  notes      String?
-  createdAt  DateTime @default(now())
+  id        String   @id @default(cuid())
+  lead      Lead     @relation(fields: [leadId], references: [id])
+  leadId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  producto  String
+  comision  Float
+  saleDate  DateTime @default(now())
+  notes     String?
+  createdAt DateTime @default(now())
+
+  @@schema("seguros")
 }
 
 model TrackingEvent {
@@ -171,4 +174,6 @@ model TrackingEvent {
   device      String?
   ipAddress   String?
   createdAt   DateTime @default(now())
+
+  @@schema("seguros")
 }
