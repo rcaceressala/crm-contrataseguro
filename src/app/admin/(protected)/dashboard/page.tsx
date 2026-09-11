@@ -4,18 +4,15 @@ import { SourceChart } from '@/components/admin/SourceChart'
 import Link from 'next/link'
 
 const statusBadge: Record<string, string> = {
-  NUEVO:          'bg-blue-100 text-blue-800',
-  CONTACTADO:     'bg-yellow-100 text-yellow-800',
-  INTERESADO:     'bg-green-100 text-green-800',
-  VISITA_AGENDADA:'bg-purple-100 text-purple-800',
-  RESERVA:        'bg-teal-100 text-teal-800',
-  VENDIDO:        'bg-emerald-100 text-emerald-800',
-  PERDIDO:        'bg-red-100 text-red-800',
+  NUEVO:      'bg-blue-100 text-blue-800',
+  CONTACTADO: 'bg-yellow-100 text-yellow-800',
+  COTIZADO:   'bg-purple-100 text-purple-800',
+  CONVERTIDO: 'bg-emerald-100 text-emerald-800',
+  PERDIDO:    'bg-red-100 text-red-800',
 }
 
 const statusLabels: Record<string, string> = {
-  NUEVO: 'Nuevo', CONTACTADO: 'Contactado', INTERESADO: 'Interesado',
-  VISITA_AGENDADA: 'Visita agendada', RESERVA: 'Reserva', VENDIDO: 'Vendido', PERDIDO: 'Perdido',
+  NUEVO: 'Nuevo', CONTACTADO: 'Contactado', COTIZADO: 'Cotizado', CONVERTIDO: 'Convertido', PERDIDO: 'Perdido',
 }
 
 const sourceLabels: Record<string, string> = {

@@ -5,12 +5,11 @@ import { LeadFiltersBar } from '@/components/admin/LeadFiltersBar'
 
 const statusBadge: Record<string, string> = {
   NUEVO:'bg-blue-100 text-blue-800', CONTACTADO:'bg-yellow-100 text-yellow-800',
-  INTERESADO:'bg-green-100 text-green-800', VISITA_AGENDADA:'bg-purple-100 text-purple-800',
-  RESERVA:'bg-teal-100 text-teal-800', VENDIDO:'bg-emerald-100 text-emerald-800', PERDIDO:'bg-red-100 text-red-800',
+  COTIZADO:'bg-purple-100 text-purple-800', CONVERTIDO:'bg-emerald-100 text-emerald-800',
+  PERDIDO:'bg-red-100 text-red-800',
 }
 const statusLabels: Record<string, string> = {
-  NUEVO:'Nuevo', CONTACTADO:'Contactado', INTERESADO:'Interesado',
-  VISITA_AGENDADA:'Visita agendada', RESERVA:'Reserva', VENDIDO:'Vendido', PERDIDO:'Perdido',
+  NUEVO:'Nuevo', CONTACTADO:'Contactado', COTIZADO:'Cotizado', CONVERTIDO:'Convertido', PERDIDO:'Perdido',
 }
 const sourceLabels: Record<string, string> = {
   FACEBOOK_ADS:'Facebook', INSTAGRAM:'Instagram', GOOGLE_ADS:'Google',
@@ -32,7 +31,7 @@ export default async function LeadsPage({ searchParams }: PageProps) {
   const skip    = (page - 1) * limit
 
   const where: any = {}
-  if (session?.user.role === 'VENDEDOR') where.assignedUserId = session.user.id
+  if (session?.user.role === 'ASESOR') where.assignedUserId = session.user.id
   if (searchParams.status)         where.status         = searchParams.status
   if (searchParams.source)         where.source         = searchParams.source
   if (searchParams.assignedUserId) where.assignedUserId = searchParams.assignedUserId
@@ -51,7 +50,6 @@ export default async function LeadsPage({ searchParams }: PageProps) {
       include: {
         assignedTo: { select: { id: true, name: true } },
         campaign:   { select: { utmCampaign: true } },
-        property:   { select: { title: true } },
         _count:     { select: { notes: true, followUps: true } },
       },
     }),

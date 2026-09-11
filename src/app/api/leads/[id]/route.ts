@@ -14,7 +14,6 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     where: { id: params.id },
     include: {
       assignedTo: { select: { id: true, name: true, email: true, role: true } },
-      property:   { select: { id: true, title: true, slug: true, price: true, area: true } },
       campaign:   { select: { id: true, name: true, platform: true } },
       notes: {
         include: { user: { select: { id: true, name: true } } },
@@ -30,8 +29,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
   if (!lead) return apiError('Lead no encontrado', 404)
 
-  // Vendedor solo puede ver sus leads
-  if (user.role === Role.VENDEDOR && lead.assignedUserId !== user.id) {
+  // Asesor solo puede ver sus leads
+  if (user.role === Role.ASESOR && lead.assignedUserId !== user.id) {
     return apiError('No autorizado', 403)
   }
 
@@ -48,8 +47,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
   if (!parsed.success) return apiError(parsed.error.errors[0].message, 422)
 
-  // Solo admin/supervisor pueden reasignar
-  if (parsed.data.assignedUserId !== undefined && user.role === Role.VENDEDOR) {
+  // Solo admin puede reasignar
+  if (parsed.data.assignedUserId !== undefined && user.role === Role.ASESOR) {
     return apiError('Sin permisos para reasignar', 403)
   }
 
@@ -58,7 +57,6 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     data:  parsed.data,
     include: {
       assignedTo: { select: { id: true, name: true } },
-      property:   { select: { id: true, title: true } },
     },
   })
 

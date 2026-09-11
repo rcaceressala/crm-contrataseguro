@@ -17,8 +17,8 @@ export async function GET(req: NextRequest) {
 
   const where: any = {}
 
-  // Vendedores solo ven sus leads asignados
-  if (user.role === Role.VENDEDOR) {
+  // Asesores solo ven sus leads asignados
+  if (user.role === Role.ASESOR) {
     where.assignedUserId = user.id
   }
 
@@ -50,7 +50,6 @@ export async function GET(req: NextRequest) {
       orderBy: { createdAt: 'desc' },
       include: {
         assignedTo: { select: { id: true, name: true, email: true } },
-        property:   { select: { id: true, title: true, slug: true } },
         campaign:   { select: { id: true, name: true, platform: true } },
         _count: { select: { notes: true, followUps: true } },
       },
@@ -97,6 +96,7 @@ export async function POST(req: NextRequest) {
         message:     d.message || null,
         status:      'NUEVO',
         source,
+        category:    d.category,
         utmSource:   d.utm_source   || null,
         utmMedium:   d.utm_medium   || null,
         utmCampaign: d.utm_campaign || null,
@@ -108,7 +108,6 @@ export async function POST(req: NextRequest) {
         referrer:    d.referrer     || null,
         device:      d.device       || null,
         ipAddress:   getClientIP(req),
-        propertyId:  d.propertyId   || null,
         campaignId:  campaignId     || null,
       },
     })

@@ -10,24 +10,23 @@ export async function GET(req: NextRequest) {
     orderBy: { createdAt: 'desc' },
     include: {
       assignedTo: { select: { name: true } },
-      property:   { select: { title: true } },
       campaign:   { select: { name: true } },
     },
   })
 
   const headers = [
-    'ID', 'Nombre', 'Teléfono', 'Email', 'Estado', 'Fuente',
+    'ID', 'Nombre', 'Teléfono', 'Email', 'Estado', 'Fuente', 'Categoría',
     'utm_source', 'utm_medium', 'utm_campaign', 'utm_content',
     'fbclid', 'gclid', 'Página de entrada', 'Dispositivo',
-    'Vendedor asignado', 'Parcela', 'Campaña', 'Creado',
+    'Asesor asignado', 'Campaña', 'Creado',
   ]
 
   const rows = leads.map((l) => [
     l.id, l.name, l.phone, l.email ?? '',
-    l.status, l.source,
+    l.status, l.source, l.category,
     l.utmSource ?? '', l.utmMedium ?? '', l.utmCampaign ?? '', l.utmContent ?? '',
     l.fbclid ?? '', l.gclid ?? '', l.landingPage ?? '', l.device ?? '',
-    l.assignedTo?.name ?? '', l.property?.title ?? '', l.campaign?.name ?? '',
+    l.assignedTo?.name ?? '', l.campaign?.name ?? '',
     l.createdAt.toISOString(),
   ])
 

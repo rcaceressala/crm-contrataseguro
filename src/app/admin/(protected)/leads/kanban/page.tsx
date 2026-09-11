@@ -5,7 +5,7 @@ import { KanbanBoard } from '@/components/admin/KanbanBoard'
 export default async function KanbanPage() {
   const session = await auth()
   const where: any = {}
-  if (session?.user.role === 'VENDEDOR') where.assignedUserId = session.user.id
+  if (session?.user.role === 'ASESOR') where.assignedUserId = session.user.id
 
   const leads = await prisma.lead.findMany({
     where,

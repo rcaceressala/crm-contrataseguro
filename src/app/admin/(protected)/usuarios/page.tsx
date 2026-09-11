@@ -14,9 +14,8 @@ type User = {
 }
 
 const roleConfig: Record<string, { label: string; color: string }> = {
-  ADMIN:      { label: 'Admin',      color: 'bg-green-100 text-green-800' },
-  SUPERVISOR: { label: 'Supervisor', color: 'bg-blue-100 text-blue-800' },
-  VENDEDOR:   { label: 'Vendedor',   color: 'bg-orange-100 text-orange-800' },
+  ADMIN:  { label: 'Admin',  color: 'bg-green-100 text-green-800' },
+  ASESOR: { label: 'Asesor', color: 'bg-orange-100 text-orange-800' },
 }
 
 const inputCls =
@@ -30,7 +29,7 @@ export default function UsuariosPage() {
 
   // ── nuevo usuario ──────────────────────────────────────────
   const [showNew, setShowNew] = useState(false)
-  const [newForm, setNewForm] = useState({ name: '', email: '', password: '', role: 'VENDEDOR' })
+  const [newForm, setNewForm] = useState({ name: '', email: '', password: '', role: 'ASESOR' })
   const [newErr, setNewErr] = useState('')
   const [newLoading, setNewLoading] = useState(false)
 
@@ -62,7 +61,7 @@ export default function UsuariosPage() {
       const data = await res.json()
       if (!res.ok) { setNewErr(data.error ?? 'Error al crear usuario'); return }
       setShowNew(false)
-      setNewForm({ name: '', email: '', password: '', role: 'VENDEDOR' })
+      setNewForm({ name: '', email: '', password: '', role: 'ASESOR' })
       fetchUsers()
     } finally {
       setNewLoading(false)
@@ -121,7 +120,7 @@ export default function UsuariosPage() {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {users.map((u) => {
-              const rc = roleConfig[u.role] ?? roleConfig.VENDEDOR
+              const rc = roleConfig[u.role] ?? roleConfig.ASESOR
               const initials = u.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
               return (
                 <tr key={u.id} className="hover:bg-gray-50 transition-colors">
@@ -209,8 +208,7 @@ export default function UsuariosPage() {
                   className={inputCls}
                 >
                   <option value="ADMIN">Admin</option>
-                  <option value="SUPERVISOR">Supervisor</option>
-                  <option value="VENDEDOR">Vendedor</option>
+                  <option value="ASESOR">Asesor</option>
                 </select>
               </div>
               {newErr && <p className="text-xs text-red-600">{newErr}</p>}

@@ -7,8 +7,8 @@ interface User { id: string; name: string }
 const STATUS_OPTIONS = [
   { value: '', label: 'Todos los estados' },
   { value: 'NUEVO', label: 'Nuevo' }, { value: 'CONTACTADO', label: 'Contactado' },
-  { value: 'INTERESADO', label: 'Interesado' }, { value: 'VISITA_AGENDADA', label: 'Visita agendada' },
-  { value: 'RESERVA', label: 'Reserva' }, { value: 'VENDIDO', label: 'Vendido' }, { value: 'PERDIDO', label: 'Perdido' },
+  { value: 'COTIZADO', label: 'Cotizado' }, { value: 'CONVERTIDO', label: 'Convertido' },
+  { value: 'PERDIDO', label: 'Perdido' },
 ]
 const SOURCE_OPTIONS = [
   { value: '', label: 'Todas las fuentes' },
@@ -49,7 +49,7 @@ export function LeadFiltersBar({ users }: { users: User[] }) {
         {SOURCE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
       <select defaultValue={searchParams.get('assignedUserId') ?? ''} onChange={(e) => updateFilter('assignedUserId', e.target.value)} className={selectClass}>
-        <option value="">Todos los vendedores</option>
+        <option value="">Todos los asesores</option>
         {users.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
       </select>
     </div>

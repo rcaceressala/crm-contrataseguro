@@ -40,7 +40,6 @@ function Navbar() {
 
           <div className="hidden md:flex items-center gap-8">
             <Link href="/"           className="text-gray-600 hover:text-[#1a3a2a] text-sm font-medium transition-colors">Inicio</Link>
-            <Link href="/parcelas"   className="text-gray-600 hover:text-[#1a3a2a] text-sm font-medium transition-colors">Parcelas</Link>
             <Link href="/#beneficios" className="text-gray-600 hover:text-[#1a3a2a] text-sm font-medium transition-colors">Beneficios</Link>
             <Link href="/#faq"       className="text-gray-600 hover:text-[#1a3a2a] text-sm font-medium transition-colors">FAQ</Link>
             <Link href="/#contacto"  className="bg-[#1a3a2a] hover:bg-[#2d5a3f] text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
@@ -79,7 +78,6 @@ function Footer() {
           <div>
             <div className="font-semibold mb-3 text-[#b8860b]">Navegación</div>
             <div className="text-white/70 text-sm space-y-2">
-              <div><Link href="/parcelas"   className="hover:text-white transition-colors">Ver parcelas</Link></div>
               <div><Link href="/#contacto"  className="hover:text-white transition-colors">Contacto</Link></div>
               <div><Link href="/#faq"       className="hover:text-white transition-colors">Preguntas frecuentes</Link></div>
             </div>

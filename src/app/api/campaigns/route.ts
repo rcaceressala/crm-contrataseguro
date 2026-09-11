@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
 // POST /api/campaigns
 export async function POST(req: NextRequest) {
   const user = await requireAuth()
-  if (!user || user.role === Role.VENDEDOR) return apiError('No autorizado', 403)
+  if (!user || user.role === Role.ASESOR) return apiError('No autorizado', 403)
 
   const parsed = createCampaignSchema.safeParse(await req.json())
   if (!parsed.success) return apiError(parsed.error.errors[0].message, 422)

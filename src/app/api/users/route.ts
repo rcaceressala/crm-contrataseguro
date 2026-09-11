@@ -7,7 +7,7 @@ import { Role } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
 export async function GET(req: NextRequest) {
-  const user = await requireRole([Role.ADMIN, Role.SUPERVISOR])
+  const user = await requireRole([Role.ADMIN])
   if (!user) return apiError('No autorizado', 403)
 
   const users = await prisma.user.findMany({
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
       name:         parsed.data.name,
       email:        parsed.data.email,
       passwordHash,
-      role:         parsed.data.role ?? Role.VENDEDOR,
+      role:         parsed.data.role ?? Role.ASESOR,
     },
     select: { id: true, name: true, email: true, role: true, createdAt: true },
   })

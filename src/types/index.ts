@@ -1,12 +1,11 @@
-import type { User, Lead, LeadNote, FollowUp, Property, Campaign, Sale } from '@prisma/client'
+import type { User, Lead, LeadNote, FollowUp, Campaign, Sale } from '@prisma/client'
 
 // Re-exportar enums para uso en frontend
-export { Role, LeadStatus, LeadSource, PropertyStatus } from '@prisma/client'
+export { Role, LeadStatus, LeadSource, InsuranceCategory } from '@prisma/client'
 
 // Tipos extendidos con relaciones
 export type LeadWithRelations = Lead & {
   assignedTo?: Pick<User, 'id' | 'name' | 'email'> | null
-  property?: Pick<Property, 'id' | 'title' | 'slug'> | null
   campaign?: Pick<Campaign, 'id' | 'name' | 'platform'> | null
   notes?: LeadNote[]
   followUps?: FollowUp[]
@@ -58,7 +57,6 @@ export interface CreateLeadPayload {
   phone: string
   email?: string
   message?: string
-  propertyId?: string
   utm_source?: string
   utm_medium?: string
   utm_campaign?: string

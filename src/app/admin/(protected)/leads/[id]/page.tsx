@@ -6,8 +6,7 @@ import { LeadStatusSelect } from '@/components/admin/LeadStatusSelect'
 import { FollowUpForm } from '@/components/admin/FollowUpForm'
 
 const statusLabels: Record<string, string> = {
-  NUEVO:'Nuevo', CONTACTADO:'Contactado', INTERESADO:'Interesado',
-  VISITA_AGENDADA:'Visita agendada', RESERVA:'Reserva', VENDIDO:'Vendido', PERDIDO:'Perdido',
+  NUEVO:'Nuevo', CONTACTADO:'Contactado', COTIZADO:'Cotizado', CONVERTIDO:'Convertido', PERDIDO:'Perdido',
 }
 const sourceLabels: Record<string, string> = {
   FACEBOOK_ADS:'Facebook Ads', INSTAGRAM:'Instagram', GOOGLE_ADS:'Google Ads',
@@ -22,7 +21,6 @@ export default async function LeadDetailPage({ params }: { params: { id: string 
       where: { id: params.id },
       include: {
         assignedTo: { select: { id: true, name: true } },
-        property:   { select: { id: true, title: true, price: true } },
         campaign:   { select: { id: true, name: true, platform: true } },
         notes: {
           include: { user: { select: { name: true } } },
@@ -39,10 +37,6 @@ export default async function LeadDetailPage({ params }: { params: { id: string 
   ])
 
   if (!lead) notFound()
-
-  const price = lead.property
-    ? new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(lead.property.price)
-    : null
 
   return (
     <div className="p-6 space-y-6 max-w-6xl">
@@ -70,8 +64,8 @@ export default async function LeadDetailPage({ params }: { params: { id: string 
                 { label: 'Fuente',   value: sourceLabels[lead.source] ?? lead.source },
                 { label: 'Teléfono', value: lead.phone },
                 { label: 'Email',    value: lead.email ?? '—' },
-                { label: 'Vendedor', value: lead.assignedTo?.name ?? 'Sin asignar' },
-                { label: 'Parcela',  value: lead.property ? `${lead.property.title} · ${price}` : '—' },
+                { label: 'Asesor',   value: lead.assignedTo?.name ?? 'Sin asignar' },
+                { label: 'Categoría', value: lead.category },
                 { label: 'Campaña',  value: lead.campaign?.name ?? '—' },
                 { label: 'Dispositivo', value: lead.device ?? '—' },
                 { label: 'Creado',   value: new Date(lead.createdAt).toLocaleString('es-CL') },

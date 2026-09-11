@@ -1,4 +1,4 @@
-import { PrismaClient, Role, LeadStatus, LeadSource, PropertyStatus } from '@prisma/client'
+import { PrismaClient, Role, LeadStatus, LeadSource, InsuranceCategory } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
@@ -12,47 +12,37 @@ async function main() {
   await prisma.leadNote.deleteMany()
   await prisma.lead.deleteMany()
   await prisma.campaign.deleteMany()
-  await prisma.property.deleteMany()
   await prisma.trackingEvent.deleteMany()
   await prisma.user.deleteMany()
 
   // ─── Usuarios ───────────────────────────────────────────
   const adminPass = await bcrypt.hash('admin123', 12)
-  const userPass  = await bcrypt.hash('vendedor123', 12)
+  const userPass  = await bcrypt.hash('asesor123', 12)
 
   const admin = await prisma.user.create({
     data: {
       name: 'Administrador',
-      email: 'admin@mirador.cl',
+      email: 'admin@contrataseguro.cl',
       passwordHash: adminPass,
       role: Role.ADMIN,
     },
   })
 
-  const supervisor = await prisma.user.create({
-    data: {
-      name: 'María Rodríguez',
-      email: 'maria@mirador.cl',
-      passwordHash: userPass,
-      role: Role.SUPERVISOR,
-    },
-  })
-
-  const vendedor1 = await prisma.user.create({
+  const asesor1 = await prisma.user.create({
     data: {
       name: 'Juan Pérez',
-      email: 'juan@mirador.cl',
+      email: 'juan@contrataseguro.cl',
       passwordHash: userPass,
-      role: Role.VENDEDOR,
+      role: Role.ASESOR,
     },
   })
 
-  const vendedor2 = await prisma.user.create({
+  const asesor2 = await prisma.user.create({
     data: {
       name: 'Ana Soto',
-      email: 'ana@mirador.cl',
+      email: 'ana@contrataseguro.cl',
       passwordHash: userPass,
-      role: Role.VENDEDOR,
+      role: Role.ASESOR,
     },
   })
 
@@ -61,12 +51,12 @@ async function main() {
   // ─── Campañas ────────────────────────────────────────────
   const camp1 = await prisma.campaign.create({
     data: {
-      name: 'Parcelas Mayo 2025',
+      name: 'Seguro Dental Mayo 2025',
       platform: 'Facebook',
       budget: 180000,
       utmSource: 'facebook',
       utmMedium: 'cpc',
-      utmCampaign: 'parcelas_mayo',
+      utmCampaign: 'dental_mayo',
       startDate: new Date('2025-05-01'),
       endDate: new Date('2025-05-31'),
     },
@@ -74,19 +64,19 @@ async function main() {
 
   const camp2 = await prisma.campaign.create({
     data: {
-      name: 'Video Lote Sur',
+      name: 'Video Seguro Automotriz',
       platform: 'Instagram',
       budget: 120000,
       utmSource: 'instagram',
       utmMedium: 'cpc',
-      utmCampaign: 'video_lote_sur',
+      utmCampaign: 'video_automotriz',
       startDate: new Date('2025-05-01'),
     },
   })
 
   const camp3 = await prisma.campaign.create({
     data: {
-      name: 'Google Search Parcelas',
+      name: 'Google Search Seguros',
       platform: 'Google',
       budget: 150000,
       utmSource: 'google',
@@ -110,94 +100,17 @@ async function main() {
 
   const camp5 = await prisma.campaign.create({
     data: {
-      name: 'TikTok Jóvenes Inversores',
+      name: 'TikTok Seguro Mascotas',
       platform: 'TikTok',
       budget: 80000,
       utmSource: 'tiktok',
       utmMedium: 'social',
-      utmCampaign: 'tiktok_jovenes',
+      utmCampaign: 'tiktok_mascotas',
       startDate: new Date('2025-05-05'),
     },
   })
 
   console.log('✓ Campañas creadas')
-
-  // ─── Propiedades ─────────────────────────────────────────
-  const properties = await Promise.all([
-    prisma.property.create({
-      data: {
-        title: 'Parcela A-01',
-        slug: 'parcela-a-01',
-        description: 'Parcela con vista panorámica al valle, acceso directo a camino principal.',
-        price: 29000990,
-        area: 5000,
-        location: 'Sector A, Isla Yáquil, Santa Cruz',
-        status: PropertyStatus.DISPONIBLE,
-        images: [
-          'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800',
-          'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800',
-        ],
-      },
-    }),
-    prisma.property.create({
-      data: {
-        title: 'Parcela A-02',
-        slug: 'parcela-a-02',
-        description: 'Parcela plana ideal para construcción inmediata, con todos los servicios básicos.',
-        price: 29000990,
-        area: 5200,
-        location: 'Sector A, Isla Yáquil, Santa Cruz',
-        status: PropertyStatus.RESERVADA,
-        images: [
-          'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800',
-        ],
-      },
-    }),
-    prisma.property.create({
-      data: {
-        title: 'Parcela B-01',
-        slug: 'parcela-b-01',
-        description: 'Parcela en sector privilegiado con bosque nativo en límite sur.',
-        price: 31500000,
-        area: 6000,
-        location: 'Sector B, Isla Yáquil, Santa Cruz',
-        status: PropertyStatus.DISPONIBLE,
-        images: [
-          'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800',
-        ],
-      },
-    }),
-    prisma.property.create({
-      data: {
-        title: 'Parcela B-02',
-        slug: 'parcela-b-02',
-        description: 'Terreno con pendiente suave, ideal para casa con vista al cerro.',
-        price: 28500000,
-        area: 4800,
-        location: 'Sector B, Isla Yáquil, Santa Cruz',
-        status: PropertyStatus.DISPONIBLE,
-        images: [
-          'https://images.unsplash.com/photo-1444723121867-7a241cacace9?w=800',
-        ],
-      },
-    }),
-    prisma.property.create({
-      data: {
-        title: 'Parcela C-01',
-        slug: 'parcela-c-01',
-        description: 'Parcela esquina con mayor privacidad, rodeada de vegetación.',
-        price: 33000000,
-        area: 7500,
-        location: 'Sector C, Isla Yáquil, Santa Cruz',
-        status: PropertyStatus.VENDIDA,
-        images: [
-          'https://images.unsplash.com/photo-1448375240586-882707db888b?w=800',
-        ],
-      },
-    }),
-  ])
-
-  console.log('✓ Propiedades creadas')
 
   // ─── Leads ───────────────────────────────────────────────
   const leadsData = [
@@ -205,68 +118,70 @@ async function main() {
       name: 'Carlos Fuentes',
       phone: '+56988123344',
       email: 'carlos.fuentes@gmail.com',
-      message: 'Me interesa la parcela A-01, ¿tienen financiamiento?',
-      status: LeadStatus.INTERESADO,
+      message: 'Me interesa un seguro dental, ¿tienen planes familiares?',
+      status: LeadStatus.COTIZADO,
       source: LeadSource.FACEBOOK_ADS,
-      utmSource: 'facebook', utmMedium: 'cpc', utmCampaign: 'parcelas_mayo',
+      category: InsuranceCategory.DENTAL,
+      utmSource: 'facebook', utmMedium: 'cpc', utmCampaign: 'dental_mayo',
       utmContent: 'video_testimonial', device: 'mobile',
-      landingPage: '/parcelas/parcela-a-01',
-      assignedUserId: supervisor.id,
+      landingPage: '/seguros/dental',
+      assignedUserId: asesor1.id,
       campaignId: camp1.id,
-      propertyId: properties[0].id,
     },
     {
       name: 'Valentina Ríos',
       phone: '+56977519900',
       email: 'val.rios@hotmail.com',
-      message: 'Quiero agendar una visita al proyecto este fin de semana',
-      status: LeadStatus.VISITA_AGENDADA,
+      message: 'Quiero cotizar un seguro automotriz para mi auto nuevo',
+      status: LeadStatus.COTIZADO,
       source: LeadSource.INSTAGRAM,
-      utmSource: 'instagram', utmMedium: 'cpc', utmCampaign: 'video_lote_sur',
+      category: InsuranceCategory.AUTOMOTRIZ,
+      utmSource: 'instagram', utmMedium: 'cpc', utmCampaign: 'video_automotriz',
       utmContent: 'reel_360', device: 'mobile',
-      landingPage: '/parcelas',
-      assignedUserId: vendedor1.id,
+      landingPage: '/seguros',
+      assignedUserId: asesor1.id,
       campaignId: camp2.id,
     },
     {
       name: 'Rodrigo Castillo',
       phone: '+56966348821',
       email: null,
-      message: 'Busco parcela para construir casa de campo',
+      message: 'Busco un seguro de hogar para mi casa nueva',
       status: LeadStatus.NUEVO,
       source: LeadSource.GOOGLE_ADS,
+      category: InsuranceCategory.HOGAR,
       utmSource: 'google', utmMedium: 'cpc', utmCampaign: 'google_search',
       gclid: 'GCL-abc123xyz', device: 'desktop',
       landingPage: '/',
-      assignedUserId: vendedor2.id,
+      assignedUserId: asesor2.id,
       campaignId: camp3.id,
     },
     {
       name: 'María Espinoza',
       phone: '+56999234411',
       email: 'mariaesp@gmail.com',
-      message: 'Vi el proyecto en WhatsApp, me interesa saber precios',
-      status: LeadStatus.RESERVA,
+      message: 'Vi el proyecto en WhatsApp, me interesa saber precios del seguro catastrófico',
+      status: LeadStatus.COTIZADO,
       source: LeadSource.WHATSAPP,
+      category: InsuranceCategory.CATASTROFICO,
       utmSource: 'whatsapp', utmMedium: 'social', utmCampaign: null,
       device: 'mobile',
-      landingPage: '/parcelas/parcela-b-01',
-      assignedUserId: supervisor.id,
-      propertyId: properties[2].id,
+      landingPage: '/seguros/catastrofico',
+      assignedUserId: asesor1.id,
     },
     {
       name: 'Felipe Muñoz',
       phone: '+56955427788',
       email: 'fmuñoz@empresa.cl',
-      message: 'Inversión para arrendar',
-      status: LeadStatus.VENDIDO,
+      message: 'Necesito seguro de vida para mi familia',
+      status: LeadStatus.CONVERTIDO,
       source: LeadSource.FACEBOOK_ADS,
+      category: InsuranceCategory.VIDA,
       utmSource: 'facebook', utmMedium: 'cpc', utmCampaign: 'remarketing_v2',
       fbclid: 'FB-rem-456def', device: 'desktop',
-      landingPage: '/parcelas',
-      assignedUserId: vendedor1.id,
+      landingPage: '/seguros',
+      assignedUserId: asesor2.id,
       campaignId: camp4.id,
-      propertyId: properties[4].id,
     },
     {
       name: 'Sofía Herrera',
@@ -275,61 +190,65 @@ async function main() {
       message: null,
       status: LeadStatus.CONTACTADO,
       source: LeadSource.TIKTOK,
-      utmSource: 'tiktok', utmMedium: 'social', utmCampaign: 'tiktok_jovenes',
+      category: InsuranceCategory.MASCOTAS,
+      utmSource: 'tiktok', utmMedium: 'social', utmCampaign: 'tiktok_mascotas',
       device: 'mobile',
       landingPage: '/',
-      assignedUserId: vendedor2.id,
+      assignedUserId: asesor1.id,
       campaignId: camp5.id,
     },
     {
       name: 'Patricio Vega',
       phone: '+56933445566',
       email: 'pvega@hotmail.com',
-      message: '¿Cuáles parcelas tienen acceso a agua potable?',
-      status: LeadStatus.INTERESADO,
+      message: '¿El seguro dental cubre ortodoncia?',
+      status: LeadStatus.COTIZADO,
       source: LeadSource.FACEBOOK_ADS,
-      utmSource: 'facebook', utmMedium: 'cpc', utmCampaign: 'parcelas_mayo',
+      category: InsuranceCategory.DENTAL,
+      utmSource: 'facebook', utmMedium: 'cpc', utmCampaign: 'dental_mayo',
       utmContent: 'imagen_mapa', device: 'desktop',
-      landingPage: '/parcelas/parcela-b-02',
-      assignedUserId: supervisor.id,
+      landingPage: '/seguros/dental',
+      assignedUserId: asesor2.id,
       campaignId: camp1.id,
-      propertyId: properties[3].id,
     },
     {
       name: 'Camila Torres',
       phone: '+56922334455',
       email: 'camila.torres@gmail.com',
-      message: 'Me llegó referencia de un amigo que compró',
+      message: 'Me llegó referencia de un amigo que contrató un plan complementario',
       status: LeadStatus.NUEVO,
       source: LeadSource.REFERIDO,
+      category: InsuranceCategory.COMPLEMENTARIO,
       device: 'mobile',
       landingPage: '/',
-      assignedUserId: vendedor1.id,
+      assignedUserId: asesor1.id,
     },
     {
       name: 'Diego Morales',
       phone: '+56911223344',
       email: null,
-      message: 'Quiero información del financiamiento a largo plazo',
+      message: 'Quiero información sobre financiamiento del seguro automotriz',
       status: LeadStatus.PERDIDO,
       source: LeadSource.GOOGLE_ADS,
+      category: InsuranceCategory.AUTOMOTRIZ,
       utmSource: 'google', utmMedium: 'cpc', utmCampaign: 'google_search',
       gclid: 'GCL-def789ghi', device: 'mobile',
       landingPage: '/',
-      assignedUserId: vendedor2.id,
+      assignedUserId: asesor2.id,
       campaignId: camp3.id,
     },
     {
       name: 'Lorena Campos',
       phone: '+56900112233',
       email: 'lorena.c@gmail.com',
-      message: 'Busco parcela cerca de 5.000 m² con vista',
-      status: LeadStatus.INTERESADO,
+      message: 'Busco un plan complementario de salud con buena cobertura',
+      status: LeadStatus.COTIZADO,
       source: LeadSource.ORGANICO,
+      category: InsuranceCategory.COMPLEMENTARIO,
       device: 'desktop',
       referrer: 'https://www.google.com',
-      landingPage: '/parcelas',
-      assignedUserId: supervisor.id,
+      landingPage: '/seguros',
+      assignedUserId: asesor1.id,
     },
   ]
 
@@ -345,32 +264,32 @@ async function main() {
   await prisma.leadNote.create({
     data: {
       leadId: createdLeads[0].id,
-      userId: supervisor.id,
-      note: 'Llamé al cliente, está muy interesado. Quiere financiamiento a 24 meses. Agendar visita para el sábado.',
+      userId: asesor1.id,
+      note: 'Llamé al cliente, está muy interesado. Quiere plan familiar. Enviar cotización.',
     },
   })
 
   await prisma.leadNote.create({
     data: {
       leadId: createdLeads[0].id,
-      userId: supervisor.id,
-      note: 'Envié PDF con información del proyecto y tabla de precios.',
+      userId: asesor1.id,
+      note: 'Envié PDF con información del plan dental y tabla de coberturas.',
     },
   })
 
   await prisma.leadNote.create({
     data: {
       leadId: createdLeads[1].id,
-      userId: vendedor1.id,
-      note: 'Visita confirmada para el sábado 17 a las 11:00 AM. Viene con su pareja.',
+      userId: asesor1.id,
+      note: 'Cotización enviada por WhatsApp. Está evaluando con su pareja.',
     },
   })
 
   await prisma.leadNote.create({
     data: {
       leadId: createdLeads[4].id,
-      userId: vendedor1.id,
-      note: 'Venta cerrada. Firmó promesa de compraventa. Pagó $5.000.000 de pie.',
+      userId: asesor2.id,
+      note: 'Venta cerrada. Firmó la póliza de vida. Primera cuota pagada.',
     },
   })
 
@@ -378,9 +297,9 @@ async function main() {
   await prisma.followUp.create({
     data: {
       leadId: createdLeads[0].id,
-      userId: supervisor.id,
+      userId: asesor1.id,
       followUpDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      description: 'Llamar para confirmar visita del sábado',
+      description: 'Llamar para confirmar recepción de la cotización',
       done: false,
     },
   })
@@ -388,9 +307,9 @@ async function main() {
   await prisma.followUp.create({
     data: {
       leadId: createdLeads[2].id,
-      userId: vendedor2.id,
+      userId: asesor2.id,
       followUpDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
-      description: 'Primer contacto, presentar proyecto y precios',
+      description: 'Primer contacto, presentar planes y precios',
       done: false,
     },
   })
@@ -399,21 +318,21 @@ async function main() {
   await prisma.sale.create({
     data: {
       leadId: createdLeads[4].id,
-      propertyId: properties[4].id,
-      userId: vendedor1.id,
-      amount: 33000000,
+      userId: asesor2.id,
+      producto: 'Seguro de Vida Plan Familiar',
+      comision: 85000,
       saleDate: new Date('2025-05-10'),
-      notes: 'Pago al contado con descuento del 3%',
+      notes: 'Pago mensual con descuento del 3% por pago anual anticipado',
     },
   })
 
   // ─── Tracking events ─────────────────────────────────────
   await prisma.trackingEvent.createMany({
     data: [
-      { type: 'whatsapp_click', page: '/parcelas/parcela-a-01', utmSource: 'facebook', utmCampaign: 'parcelas_mayo', device: 'mobile' },
-      { type: 'whatsapp_click', page: '/', utmSource: 'instagram', utmCampaign: 'video_lote_sur', device: 'mobile' },
-      { type: 'page_view', page: '/parcelas', utmSource: 'google', utmCampaign: 'google_search', device: 'desktop' },
-      { type: 'whatsapp_click', page: '/parcelas/parcela-b-01', device: 'mobile' },
+      { type: 'whatsapp_click', page: '/seguros/dental', utmSource: 'facebook', utmCampaign: 'dental_mayo', device: 'mobile' },
+      { type: 'whatsapp_click', page: '/', utmSource: 'instagram', utmCampaign: 'video_automotriz', device: 'mobile' },
+      { type: 'page_view', page: '/seguros', utmSource: 'google', utmCampaign: 'google_search', device: 'desktop' },
+      { type: 'whatsapp_click', page: '/seguros/catastrofico', device: 'mobile' },
     ],
   })
 
@@ -423,10 +342,9 @@ async function main() {
   console.log('✅ Seed completado exitosamente')
   console.log('───────────────────────────────────────')
   console.log('Usuarios:')
-  console.log('  admin@mirador.cl        / admin123    (ADMIN)')
-  console.log('  maria@mirador.cl        / vendedor123 (SUPERVISOR)')
-  console.log('  juan@mirador.cl         / vendedor123 (VENDEDOR)')
-  console.log('  ana@mirador.cl          / vendedor123 (VENDEDOR)')
+  console.log('  admin@contrataseguro.cl / admin123  (ADMIN)')
+  console.log('  juan@contrataseguro.cl  / asesor123 (ASESOR)')
+  console.log('  ana@contrataseguro.cl   / asesor123 (ASESOR)')
   console.log('═══════════════════════════════════════')
 }
 

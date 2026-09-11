@@ -1,41 +1,34 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getStoredUTM, detectDevice } from '@/lib/utm'
 
-interface Property {
-  id:    string
-  title: string
-  slug:  string
-}
+const CATEGORY_OPTIONS = [
+  { value: 'COMPLEMENTARIO', label: 'Complementario' },
+  { value: 'DENTAL',         label: 'Dental' },
+  { value: 'CATASTROFICO',   label: 'Catastrófico' },
+  { value: 'MASCOTAS',       label: 'Mascotas' },
+  { value: 'HOGAR',          label: 'Hogar' },
+  { value: 'AUTOMOTRIZ',     label: 'Automotriz' },
+  { value: 'VIDA',           label: 'Vida' },
+]
 
 interface ContactFormProps {
-  preselectedProperty?: string
-  properties?: Property[]
+  preselectedCategory?: string
 }
 
-export function ContactForm({ preselectedProperty, properties = [] }: ContactFormProps) {
+export function ContactForm({ preselectedCategory }: ContactFormProps) {
   const router = useRouter()
   const [loading,    setLoading]    = useState(false)
   const [error,      setError]      = useState('')
-  const [propList,   setPropList]   = useState<Property[]>(properties)
 
   const [form, setForm] = useState({
-    name:       '',
-    phone:      '',
-    email:      '',
-    propertyId: preselectedProperty ?? '',
-    message:    '',
+    name:     '',
+    phone:    '',
+    email:    '',
+    category: preselectedCategory ?? '',
+    message:  '',
   })
-
-  useEffect(() => {
-    if (properties.length === 0) {
-      fetch('/api/properties?status=DISPONIBLE')
-        .then((r) => r.json())
-        .then((res) => { if (res.data) setPropList(res.data) })
-        .catch(() => {})
-    }
-  }, [properties])
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
@@ -44,8 +37,8 @@ export function ContactForm({ preselectedProperty, properties = [] }: ContactFor
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!form.name || !form.phone) {
-      setError('Nombre y teléfono son obligatorios.')
+    if (!form.name || !form.phone || !form.category) {
+      setError('Nombre, teléfono y tipo de seguro son obligatorios.')
       return
     }
 
@@ -63,7 +56,7 @@ export function ContactForm({ preselectedProperty, properties = [] }: ContactFor
           phone:        form.phone,
           email:        form.email || undefined,
           message:      form.message || undefined,
-          propertyId:   form.propertyId || undefined,
+          category:     form.category,
           utm_source:   utm.utm_source,
           utm_medium:   utm.utm_medium,
           utm_campaign: utm.utm_campaign,
@@ -135,24 +128,23 @@ export function ContactForm({ preselectedProperty, properties = [] }: ContactFor
         />
       </div>
 
-      {/* Parcela de interés */}
-      {propList.length > 0 && (
-        <div>
-          <label htmlFor="propertyId" className="block text-sm font-medium text-gray-700 mb-1">
-            Parcela de interés
-          </label>
-          <select
-            id="propertyId" name="propertyId"
-            value={form.propertyId} onChange={handleChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a3a2a] focus:border-transparent text-gray-900 bg-white"
-          >
-            <option value="">Sin preferencia específica</option>
-            {propList.map((p) => (
-              <option key={p.id} value={p.id}>{p.title}</option>
-            ))}
-          </select>
-        </div>
-      )}
+      {/* Tipo de seguro */}
+      <div>
+        <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+          Tipo de seguro <span className="text-red-500">*</span>
+        </label>
+        <select
+          id="category" name="category"
+          value={form.category} onChange={handleChange}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a3a2a] focus:border-transparent text-gray-900 bg-white"
+          required
+        >
+          <option value="">Selecciona una opción</option>
+          {CATEGORY_OPTIONS.map((c) => (
+            <option key={c.value} value={c.value}>{c.label}</option>
+          ))}
+        </select>
+      </div>
 
       {/* Mensaje */}
       <div>

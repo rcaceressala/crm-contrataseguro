@@ -50,14 +50,8 @@ export default function GraciasPage() {
 
           <div className="flex flex-col sm:flex-row gap-3">
             <Link
-              href="/parcelas"
-              className="flex-1 bg-[#1a3a2a] hover:bg-[#2d5a3f] text-white font-semibold py-3 px-6 rounded-lg transition-colors text-center"
-            >
-              Ver más parcelas
-            </Link>
-            <Link
               href="/"
-              className="flex-1 border border-gray-300 hover:border-[#1a3a2a] text-gray-700 font-semibold py-3 px-6 rounded-lg transition-colors text-center"
+              className="flex-1 bg-[#1a3a2a] hover:bg-[#2d5a3f] text-white font-semibold py-3 px-6 rounded-lg transition-colors text-center"
             >
               Volver al inicio
             </Link>

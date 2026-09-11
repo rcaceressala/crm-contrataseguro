@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { LeadStatus, LeadSource, PropertyStatus, Role } from '@prisma/client'
+import { LeadStatus, LeadSource, InsuranceCategory, Role } from '@prisma/client'
 
 // ─── Leads ───────────────────────────────────────────────
 
@@ -8,7 +8,7 @@ export const createLeadSchema = z.object({
   phone:        z.string().min(8, 'Teléfono inválido'),
   email:        z.string().email().optional().or(z.literal('')),
   message:      z.string().max(1000).optional(),
-  propertyId:   z.string().cuid().optional(),
+  category:     z.nativeEnum(InsuranceCategory),
   utm_source:   z.string().max(100).optional(),
   utm_medium:   z.string().max(100).optional(),
   utm_campaign: z.string().max(100).optional(),
@@ -24,8 +24,8 @@ export const createLeadSchema = z.object({
 export const updateLeadSchema = z.object({
   status:         z.nativeEnum(LeadStatus).optional(),
   assignedUserId: z.string().cuid().nullable().optional(),
-  propertyId:     z.string().cuid().nullable().optional(),
   campaignId:     z.string().cuid().nullable().optional(),
+  category:       z.nativeEnum(InsuranceCategory).optional(),
   name:           z.string().min(2).optional(),
   phone:          z.string().min(8).optional(),
   email:          z.string().email().optional().or(z.literal('')),
@@ -47,21 +47,6 @@ export const updateFollowUpSchema = z.object({
   followUpDate: z.string().datetime().optional(),
 })
 
-// ─── Propiedades ──────────────────────────────────────────
-
-export const createPropertySchema = z.object({
-  title:       z.string().min(2),
-  slug:        z.string().min(2).regex(/^[a-z0-9-]+$/, 'Solo letras minúsculas, números y guiones'),
-  description: z.string().max(2000).optional(),
-  price:       z.number().positive(),
-  area:        z.number().positive(),
-  location:    z.string().min(2),
-  status:      z.nativeEnum(PropertyStatus).optional(),
-  images:      z.array(z.string().url()).optional(),
-})
-
-export const updatePropertySchema = createPropertySchema.partial()
-
 // ─── Campañas ─────────────────────────────────────────────
 
 export const createCampaignSchema = z.object({
@@ -82,11 +67,11 @@ export const updateCampaignSchema = createCampaignSchema.partial().extend({
 // ─── Ventas ───────────────────────────────────────────────
 
 export const createSaleSchema = z.object({
-  leadId:     z.string().cuid(),
-  propertyId: z.string().cuid(),
-  amount:     z.number().positive(),
-  saleDate:   z.string().datetime().optional(),
-  notes:      z.string().max(1000).optional(),
+  leadId:    z.string().cuid(),
+  producto:  z.string().min(2),
+  comision:  z.number().positive(),
+  saleDate:  z.string().datetime().optional(),
+  notes:     z.string().max(1000).optional(),
 })
 
 // ─── Tracking events ─────────────────────────────────────

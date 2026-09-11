@@ -12,21 +12,21 @@ export async function POST(req: NextRequest) {
   const parsed = createSaleSchema.safeParse(await req.json())
   if (!parsed.success) return apiError(parsed.error.errors[0].message, 422)
 
-  const { leadId, propertyId, amount, saleDate, notes } = parsed.data
+  const { leadId, producto, comision, saleDate, notes } = parsed.data
 
   // Verificar que el lead existe y no tiene venta
   const lead = await prisma.lead.findUnique({ where: { id: leadId }, include: { sale: true } })
   if (!lead) return apiError('Lead no encontrado', 404)
   if (lead.sale) return apiError('Este lead ya tiene una venta registrada', 409)
 
-  // Transacción: crear venta + actualizar lead + actualizar propiedad
+  // Transacción: crear venta + actualizar lead
   const sale = await prisma.$transaction(async (tx) => {
     const newSale = await tx.sale.create({
       data: {
         leadId,
-        propertyId,
+        producto,
         userId:   user.id,
-        amount,
+        comision,
         notes:    notes || null,
         saleDate: saleDate ? new Date(saleDate) : new Date(),
       },
@@ -34,12 +34,7 @@ export async function POST(req: NextRequest) {
 
     await tx.lead.update({
       where: { id: leadId },
-      data:  { status: 'VENDIDO', propertyId },
-    })
-
-    await tx.property.update({
-      where: { id: propertyId },
-      data:  { status: 'VENDIDA' },
+      data:  { status: 'CONVERTIDO' },
     })
 
     return newSale
@@ -56,9 +51,8 @@ export async function GET(req: NextRequest) {
   const sales = await prisma.sale.findMany({
     orderBy: { saleDate: 'desc' },
     include: {
-      lead:     { select: { id: true, name: true, phone: true } },
-      property: { select: { id: true, title: true, slug: true } },
-      user:     { select: { id: true, name: true } },
+      lead: { select: { id: true, name: true, phone: true } },
+      user: { select: { id: true, name: true } },
     },
   })
 
