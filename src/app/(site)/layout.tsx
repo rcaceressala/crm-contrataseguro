@@ -5,7 +5,7 @@ import { UTMCapture } from '@/components/site/UTMCapture'
 import { WhatsAppButton } from '@/components/site/WhatsAppButton'
 
 export const metadata: Metadata = {
-  title: { default: 'Reserva Mirador Santa Cruz', template: '%s | Reserva Mirador Santa Cruz' },
+  title: { default: 'CRM Contrataseguro', template: '%s | CRM Contrataseguro' },
   description: 'Parcelas desde 5.000 m² en Isla Yáquil, Santa Cruz. Vista al valle, financiamiento directo. Desde $29.000.990.',
 }
 
@@ -33,8 +33,7 @@ function Navbar() {
               <span className="text-white text-xs font-bold">M</span>
             </div>
             <div className="leading-tight">
-              <div className="font-bold text-[#1a3a2a] text-base">Mirador</div>
-              <div className="text-xs text-gray-500 font-normal">Santa Cruz</div>
+              <div className="font-bold text-[#1a3a2a] text-base">Contrataseguro</div>
             </div>
           </Link>
 
@@ -62,7 +61,7 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <div className="font-bold text-xl mb-3">Reserva Mirador Santa Cruz</div>
+            <div className="font-bold text-xl mb-3">CRM Contrataseguro</div>
             <p className="text-white/70 text-sm leading-relaxed">
               Proyecto inmobiliario en Isla Yáquil, Santa Cruz, VI Región. Parcelas desde 5.000 m² con vista al Valle de Colchagua.
             </p>
@@ -84,7 +83,7 @@ function Footer() {
           </div>
         </div>
         <div className="border-t border-white/10 mt-8 pt-6 text-center text-white/40 text-xs">
-          © {new Date().getFullYear()} Reserva Mirador Santa Cruz · Todos los derechos reservados
+          © {new Date().getFullYear()} CRM Contrataseguro · Todos los derechos reservados
         </div>
       </div>
     </footer>

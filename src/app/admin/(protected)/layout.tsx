@@ -35,11 +35,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="px-5 py-4 border-b border-gray-100">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 bg-[#1a3a2a] rounded-lg flex items-center justify-center">
-              <span className="text-white text-xs font-bold">M</span>
+              <span className="text-white text-xs font-bold">C</span>
             </div>
             <div>
-              <div className="font-semibold text-gray-900 text-sm">Mirador CRM</div>
-              <div className="text-xs text-gray-400">Panel de gestión</div>
+              <div className="font-semibold text-gray-900 text-sm">CRM Contrataseguro</div>
+              <div className="text-xs text-gray-400">Panel de gestión de leads</div>
             </div>
           </div>
         </div>

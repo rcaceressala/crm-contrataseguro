@@ -12,7 +12,7 @@ const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '56900000000'
 
 export function WhatsAppButton({
   variant  = 'floating',
-  message  = 'Hola, me interesa recibir información sobre las parcelas en Reserva Mirador Santa Cruz.',
+  message  = 'Hola, me interesa recibir información sobre los seguros de Contrataseguro.',
   label    = 'Consultar por WhatsApp',
   className = '',
 }: WhatsAppButtonProps) {

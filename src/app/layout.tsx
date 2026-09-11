@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Reserva Mirador Santa Cruz',
-  description: 'Proyecto de parcelas en Isla Yáquil, Santa Cruz.',
+  title: 'CRM Contrataseguro',
+  description: 'Panel de gestión de leads de Contrataseguro.cl.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

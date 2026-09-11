@@ -13,7 +13,7 @@ export function Hero() {
       {/* Contenido */}
       <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
         <span className="inline-block bg-[#b8860b]/90 text-white text-xs font-semibold tracking-widest uppercase px-4 py-2 rounded-full mb-6">
-          Reserva Mirador Santa Cruz · Isla Yáquil, VI Región
+          Contrataseguro · Isla Yáquil, VI Región
         </span>
 
         <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
