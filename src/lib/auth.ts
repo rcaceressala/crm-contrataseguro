@@ -13,21 +13,37 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: 'Contraseña', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null
+        if (!credentials?.email || !credentials?.password) {
+          console.warn('[login] faltan email o contraseña')
+          return null
+        }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
-        })
+        // Normaliza el email: sin espacios y en minúsculas
+        const email    = String(credentials.email).trim().toLowerCase()
+        const password = String(credentials.password)
 
-        if (!user || !user.active) return null
+        const user = await prisma.user.findUnique({ where: { email } })
 
-        const valid = await bcrypt.compare(
-          credentials.password as string,
-          user.passwordHash
-        )
+        if (!user) {
+          console.warn('[login] usuario no encontrado:', email)
+          return null
+        }
+        if (!user.active) {
+          console.warn('[login] usuario inactivo:', email)
+          return null
+        }
 
-        if (!valid) return null
+        const valid = await bcrypt.compare(password, user.passwordHash)
 
+        if (!valid) {
+          // Nunca se registra la contraseña, solo datos para diagnosticar
+          console.warn('[login] contraseña no coincide para', email,
+            '| largo recibido:', password.length,
+            '| hash:', user.passwordHash.slice(0, 7), 'largo', user.passwordHash.length)
+          return null
+        }
+
+        console.info('[login] acceso correcto:', email)
         return {
           id:    user.id,
           name:  user.name,
